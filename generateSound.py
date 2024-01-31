@@ -1,18 +1,25 @@
-from gtts import gTTS
 import os
+from gtts import gTTS
+from pydub import AudioSegment
+import time
 
+# Fonction de synthèse vocale pour convertir un texte en fichier audio
 def text_to_speech(text):
-    # Initialize gTTS with the text to convert
-    speech = gTTS(text,lang='fr')
-    # Save the audio file to a temporary file
-    nameFile_speech = 'messageSpeech.mp3'
-    speech.save(nameFile_speech)
-    # Play the audio file
-    os.system(nameFile_speech)
+ # Définition du nom du fichier audio de sortie
+    output_file = "message_aveugle.mp3"
 
+    # Création du fichier audio à partir du texte fourni
+    tts = gTTS(text=text, lang='fr', slow=False)
+    tts.save(output_file)
 
-def speechListObstcale(list):
+    # Chargement du fichier audio dans un objet AudioSegment
+    audio = AudioSegment.from_file(output_file, format="mp3")
 
-    for nameObject in list:
-        text_to_speech(nameObject)
-    
+    # Conversion du fichier audio au format WAV avec un taux d'échantillonnage de 44100 Hz et 2 canaux
+    audio.export(output_file, format="wav", parameters=["-ac", "2", "-ar", "44100"])
+
+    # Lecture du fichier audio à l'aide de la commande "aplay"
+    os.system(f"aplay -D plughw:2,0 {output_file}")
+    time.sleep(1)
+
+#test
